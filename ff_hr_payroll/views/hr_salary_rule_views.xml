@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_salary_rule_view_tree" model="ir.ui.view">
+        <field name="name">hr.salary.rule.tree</field>
+        <field name="model">hr.salary.rule</field>
+        <field name="arch" type="xml">
+            <list string="Salary Rules">
+                <field name="sequence"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="condition_select"/>
+                <field name="amount_select"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_view_form" model="ir.ui.view">
+        <field name="name">hr.salary.rule.form</field>
+        <field name="model">hr.salary.rule</field>
+        <field name="arch" type="xml">
+            <form string="Salary Rule">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                            <field name="category_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="structure_ids" widget="many2many_tags"/>
+                            <field name="parent_rule_id" optional="hide"/>
+                            <field name="structure_type_ids" widget="many2many_tags" optional="hide"/>
+                            <field name="appears_on_payslip"/>
+                            <field name="register_id" optional="hide"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Condition" name="condition">
+                            <group string="Condition">
+                                <group>
+                                    <field name="condition_select"/>
+                                </group>
+                                <group>
+                                    <field name="condition_range_min" invisible="condition_select != 'range'"/>
+                                    <field name="condition_range_max" invisible="condition_select != 'range'"/>
+                                </group>
+                            </group>
+                            <field name="condition_python"
+                                   placeholder="e.g. bool(worked_days.get('LEAVE90', 0.0)) and contract.wage"
+                                   invisible="condition_select != 'python'"/>
+                        </page>
+                        <page string="Amount" name="amount">
+                            <group string="Amount">
+                                <group>
+                                    <field name="amount_select"/>
+                                </group>
+                                <group>
+                                    <field name="amount_percentage_base"
+                                           invisible="amount_select != 'percentage'"/>
+                                </group>
+                            </group>
+                            <field name="amount_fixed" invisible="amount_select != 'fixed'"/>
+                            <field name="amount_percentage" invisible="amount_select != 'percentage'"/>
+                            <field name="amount_python"
+                                   placeholder="e.g. -1 * contract.wage / 30  # deduct 1 day wage per absent day"
+                                   invisible="amount_select != 'python'"/>
+                        </page>
+                        <page string="Absence Rule" name="absence">
+                            <group string="Absence Rule (auto-build, no Python)">
+                                <field name="is_absence_rule"
+                                       help="Turn on to build an absence deduction rule from the fields below."/>
+                            </group>
+                            <group string="Absence Settings" invisible="not is_absence_rule">
+                                <group>
+                                    <field name="absence_code"/>
+                                    <field name="absence_multiplier"/>
+                                </group>
+                                <group>
+                                    <field name="absence_daily_wage"/>
+                                    <field name="absence_fixed_amount"
+                                           invisible="absence_daily_wage"/>
+                                </group>
+                            </group>
+                            <p class="text-muted" invisible="not is_absence_rule">
+                                On save, the condition and amount are generated automatically
+                                (e.g. 2 absent days x daily wage for 'Absence (No Leave)').
+                                Pick the debit/credit accounts in the Accounting tab.
+                            </p>
+                        </page>
+                        <page string="Accounting" name="accounting">
+                            <group string="Accounting (configurable)">
+                                <group>
+                                    <field name="account_debit"
+                                           help="Account debited when this rule increases the wage (salary expense)."/>
+                                </group>
+                                <group>
+                                    <field name="account_credit"
+                                           help="Account credited by this rule (salary payable, tax, loan...)."/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="KPI Bonus" name="kpi">
+                            <group string="KPI / Goals Bonus">
+                                <group>
+                                    <field name="is_kpi_bonus"
+                                           help="Compute this rule automatically from the employee's KPI goals."/>
+                                </group>
+                                <group>
+                                    <field name="kpi_bonus_rate"
+                                           invisible="not is_kpi_bonus"
+                                           help="Percentage of the total KPI bonus paid by this rule."/>
+                                </group>
+                            </group>
+                            <p class="text-muted">
+                                Enable "KPI Bonus Rule" to pay the employee's goal bonus
+                                automatically. The bonus is computed from the goals marked
+                                as KPI (target bonus x completeness %).
+                            </p>
+                        </page>
+                        <page string="Sales Bonus" name="sales">
+                            <group string="Sales Bonus (auto-build, no Python)">
+                                <field name="is_sales_bonus"
+                                       help="Build a sales bonus/commission rule automatically from the employee's confirmed sales."/>
+                            </group>
+                            <group string="Sales Settings" invisible="not is_sales_bonus">
+                                <group>
+                                    <field name="sales_mode"/>
+                                </group>
+                            </group>
+                            <p class="text-muted" invisible="not is_sales_bonus">
+                                Confirmed sales are read from the employee's linked user sale
+                                orders (state = confirmed) inside the payslip period.
+                                <br/><b>Target Bonus</b>: pays wage x target percent scaled by
+                                how much of the target was reached (full when met).
+                                <br/><b>Sales Commission</b>: pays commission rate % of the
+                                confirmed sales above the target.
+                                <br/>Set target percent &amp; commission rate on the employee
+                                (Sales &amp; Fines tab).
+                            </p>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_view_search" model="ir.ui.view">
+        <field name="name">hr.salary.rule.search</field>
+        <field name="model">hr.salary.rule</field>
+        <field name="arch" type="xml">
+            <search string="Salary Rules">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category_id"/>
+                <group>
+                    <filter name="group_category" string="Category" context="{'group_by': 'category_id'}"/>
+                    <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hr_salary_rule" model="ir.actions.act_window">
+        <field name="name">Salary Rules</field>
+        <field name="res_model">hr.salary.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="hr_salary_rule_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first salary rule
+            </p>
+            <p>
+                Salary rules are the calculation engine. Create unlimited rules:
+                basic wage, allowances, and deduction rules (per absent day,
+                per hour, fixed penalties, ...). Each rule has a condition and
+                an amount, plus configurable accounting accounts.
+            </p>
+        </field>
+    </record>
+</odoo>

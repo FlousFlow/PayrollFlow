@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="action_report_hr_payslip_register" model="ir.actions.report">
+            <field name="name">Payslip Register</field>
+            <field name="model">hr.payslip</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">ff_hr_payroll.report_hr_payslip_register</field>
+            <field name="report_file">ff_hr_payroll.report_hr_payslip_register</field>
+            <field name="binding_model_id" ref="model_hr_payslip"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_hr_payslip_register">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Payslip Register</h2>
+                        <div t-if="docs and docs[0].company_id">
+                            <strong t-esc="docs[0].company_id.name"/>
+                        </div>
+                        <div t-if="docs">
+                            Period:
+                            <span t-esc="min(docs.mapped('date_from')) or ''"/> -
+                            <span t-esc="max(docs.mapped('date_to')) or ''"/>
+                        </div>
+
+                        <table class="table table-sm mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th class="text-end">Gross</th>
+                                    <th class="text-end">Deductions</th>
+                                    <th class="text-end">Net</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="docs" t-as="p">
+                                    <td t-esc="p.employee_id.name or ''"/>
+                                    <td class="text-end" t-esc="p.gross_wage"/>
+                                    <td class="text-end" t-esc="p.total_deductions"/>
+                                    <td class="text-end" t-esc="p.net_wage"/>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr t-if="docs">
+                                    <th>Total</th>
+                                    <th class="text-end">
+                                        <t t-esc="sum(d.gross_wage for d in docs)"/>
+                                    </th>
+                                    <th class="text-end">
+                                        <t t-esc="sum(d.total_deductions for d in docs)"/>
+                                    </th>
+                                    <th class="text-end">
+                                        <t t-esc="sum(d.net_wage for d in docs)"/>
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="mt-4 pt-2" style="border-top: 1px solid #ccc;">
+                            Prepared by:
+                            <div class="pt-4" style="border-top: 1px solid #333; width: 40%;"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

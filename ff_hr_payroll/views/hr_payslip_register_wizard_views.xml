@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_payslip_register_wizard_form" model="ir.ui.view">
+        <field name="name">hr.payslip.register.wizard.form</field>
+        <field name="model">hr.payslip.register.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Payslip Register">
+                <group>
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group>
+                        <field name="struct_id"/>
+                        <field name="state"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print_register" type="object"
+                            string="Print (PDF)" class="btn-primary"/>
+                    <button name="action_download_xlsx" type="object"
+                            string="Download (Excel)"/>
+                    <button string="Cancel" class="btn-link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_payslip_register_wizard" model="ir.actions.act_window">
+        <field name="name">Payslip Register</field>
+        <field name="res_model">hr.payslip.register.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="hr_payslip_register_wizard_form"/>
+    </record>
+</odoo>

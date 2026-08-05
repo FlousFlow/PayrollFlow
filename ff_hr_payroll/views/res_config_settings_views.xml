@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_ff_hr_payroll" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ff.hr.payroll</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Payroll" string="Payroll" name="ff_hr_payroll"
+                     groups="ff_hr_payroll.group_hr_payroll_manager">
+                    <block title="Payroll">
+                        <setting string="Auto Post Payroll Entries"
+                                 help="Post the payslip journal entries automatically. Uncheck to keep them in draft for review.">
+                            <field name="ff_hr_payroll_auto_post"/>
+                        </setting>
+                        <setting string="Payroll Journal"
+                                 help="Journal used to post the payslip accrual entries.">
+                            <field name="ff_hr_payroll_journal_id"/>
+                        </setting>
+                        <setting string="Salary Expense Account"
+                                 help="Default debit account for the salary expense (fallback when a rule has no debit account).">
+                            <field name="ff_hr_payroll_expense_account_id"/>
+                        </setting>
+                        <setting string="Salary Payable Account"
+                                 help="Default credit account for the salary payable (fallback when a rule has no credit account).">
+                            <field name="ff_hr_payroll_payable_account_id"/>
+                        </setting>
+                    </block>
+                    <block title="Payroll Taxes (country-dependent)"
+                           help="Payroll tax deductions only apply while this switch is ON. Defaults are enabled for countries with salary taxes (e.g. Egypt); disable them for countries without payroll taxes.">
+                        <setting string="Apply Payroll Taxes"
+                                 help="Master switch. When OFF, no social insurance or income tax is deducted, regardless of the settings below.">
+                            <field name="ff_hr_payroll_apply_taxes"/>
+                        </setting>
+                        <setting string="Social Insurance"
+                                 invisible="not ff_hr_payroll_apply_taxes"
+                                 help="Deduct the employee social insurance share and post the employer share as a company expense.">
+                            <field name="ff_hr_payroll_si_enabled"/>
+                        </setting>
+                        <div invisible="not (ff_hr_payroll_apply_taxes and ff_hr_payroll_si_enabled)">
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <field name="ff_hr_payroll_si_employee_rate"/>
+                                </div>
+                                <div class="col-6">
+                                    <field name="ff_hr_payroll_si_employer_rate"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <field name="ff_hr_payroll_si_max_insurable"/>
+                                </div>
+                                <div class="col-6">
+                                    <field name="ff_hr_payroll_si_min_insurable"/>
+                                </div>
+                            </div>
+                            <field name="ff_hr_payroll_si_payable_account_id"
+                                   options="{'no_create': True}"/>
+                            <field name="ff_hr_payroll_si_expense_account_id"
+                                   options="{'no_create': True}"/>
+                        </div>
+                        <setting string="Income Tax (Salary Tax)"
+                                 invisible="not ff_hr_payroll_apply_taxes"
+                                 help="Deduct the employee income tax using the annual exemption and the progressive brackets below.">
+                            <field name="ff_hr_payroll_income_tax_enabled"/>
+                        </setting>
+                        <div invisible="not (ff_hr_payroll_apply_taxes and ff_hr_payroll_income_tax_enabled)">
+                            <field name="ff_hr_payroll_income_tax_exemption"/>
+                            <field name="ff_hr_payroll_income_tax_payable_account_id"
+                                   options="{'no_create': True}"/>
+                            <field name="ff_hr_payroll_income_tax_bracket_ids"
+                                   class="mt-2">
+                                <list string="Income Tax Brackets (annual)">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="amount_from"/>
+                                    <field name="amount_to"/>
+                                    <field name="rate"/>
+                                </list>
+                            </field>
+                        </div>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

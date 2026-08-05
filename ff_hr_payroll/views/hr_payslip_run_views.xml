@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_payslip_run_view_tree" model="ir.ui.view">
+        <field name="name">hr.payslip.run.tree</field>
+        <field name="model">hr.payslip.run</field>
+        <field name="arch" type="xml">
+            <list string="Payslip Batches">
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="struct_id"/>
+                <field name="payslip_ids"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hr_payslip_run_view_form" model="ir.ui.view">
+        <field name="name">hr.payslip.run.form</field>
+        <field name="model">hr.payslip.run</field>
+        <field name="arch" type="xml">
+            <form string="Payslip Batch">
+                <header>
+                    <button name="action_generate_payslips" type="object"
+                            string="Generate Payslips" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_draft" type="object" string="Set to Draft"
+                            invisible="state != 'done'"/>
+                    <button name="action_done" type="object" string="Confirm"
+                            invisible="state != 'draft'"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="struct_id"/>
+                        </group>
+                        <group>
+                            <field name="state"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Employees">
+                        <field name="employee_ids" widget="many2many_tags"/>
+                    </group>
+                    <group string="Generated Payslips">
+                        <field name="payslip_ids">
+                            <list string="Payslips">
+                                <field name="name"/>
+                                <field name="employee_id"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="net_wage"/>
+                                <field name="state"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_payslip_run" model="ir.actions.act_window">
+        <field name="name">Payslip Batches</field>
+        <field name="res_model">hr.payslip.run</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a payslip batch
+            </p>
+            <p>Generate payslips for many employees at once for a given period.</p>
+        </field>
+    </record>
+</odoo>

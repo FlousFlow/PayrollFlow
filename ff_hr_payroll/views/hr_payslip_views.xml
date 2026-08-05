@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_payslip_view_tree" model="ir.ui.view">
+        <field name="name">hr.payslip.tree</field>
+        <field name="model">hr.payslip</field>
+        <field name="arch" type="xml">
+            <list string="Payslips">
+                <field name="number" optional="hide"/>
+                <field name="employee_id"/>
+                <field name="contract_id" optional="show"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="gross_wage" sum="1"/>
+                <field name="total_deductions" sum="1"/>
+                <field name="net_wage" sum="1"/>
+                <field name="state" decoration-success="state == 'done'"
+                       decoration-warning="state == 'verify'"
+                       decoration-muted="state == 'cancel'"/>
+                <field name="move_id" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hr_payslip_view_form" model="ir.ui.view">
+        <field name="name">hr.payslip.form</field>
+        <field name="model">hr.payslip</field>
+        <field name="arch" type="xml">
+            <form string="Payslip">
+                <header>
+                    <button name="compute_sheet" type="object" string="Compute Sheet"
+                            class="btn-primary"
+                            invisible="state not in ('draft','verify')"
+                            help="Apply the salary rules and rebuild the payslip lines."/>
+                    <button name="action_generate_worked_days" type="object" string="Generate Worked Days"
+                            invisible="state not in ('draft','verify')"
+                            help="Pull the employee's work entries into worked days lines."/>
+                    <button name="action_payslip_done" type="object" string="Confirm"
+                            class="btn-primary"
+                            invisible="state not in ('draft','verify')"
+                            help="Compute if needed, then post the accrual journal entry."/>
+                    <button name="action_send_email" type="object" string="Send by Email"
+                            class="btn-secondary"
+                            invisible="state not in ('verify','done')"
+                            help="Send the payslip as a PDF attachment to the employee's email."/>
+                    <button name="action_payslip_draft" type="object" string="Set to Draft"
+                            invisible="state != 'done'"/>
+                    <button name="action_payslip_cancel" type="object" string="Refuse"
+                            invisible="state in ('draft','cancel')"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_move" type="object"
+                                class="oe_stat_button" icon="fa-book"
+                                invisible="not move_id">
+                            <div class="o_stat_info">
+                                <field name="move_id" readonly="1"/>
+                            </div>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="number" readonly="1" optional="hide"/>
+                            <field name="employee_id"/>
+                            <field name="contract_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="state"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="date_payment"/>
+                            <field name="struct_id"/>
+                            <field name="structure_type_id"/>
+                            <field name="payslip_run_id" readonly="1" optional="hide"/>
+                        </group>
+                    </group>
+                    <group string="Summary">
+                        <group>
+                            <field name="gross_wage" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="total_deductions" readonly="1"/>
+                            <field name="net_wage" readonly="1" class="text-success"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Payslip Lines" name="lines">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list string="Payslip Lines" editable="bottom">
+                                    <field name="name"/>
+                                    <field name="category_id"/>
+                                    <field name="code"/>
+                                    <field name="quantity"/>
+                                    <field name="rate"/>
+                                    <field name="amount"/>
+                                    <field name="total" sum="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Other Inputs" name="inputs">
+                            <field name="input_ids">
+                                <list string="Other Inputs" editable="bottom">
+                                    <field name="input_type_id"/>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="amount" sum="1"/>
+                                </list>
+                            </field>
+                            <group string="Available Input Types">
+                                <field name="input_type_ids" readonly="1" widget="many2many_tags"
+                                       options="{'no_create': True, 'no_create_edit': True}"/>
+                            </group>
+                        </page>
+                        <page string="Worked Days" name="worked">
+                            <field name="worked_days_ids" readonly="state != 'draft'">
+                                <list string="Worked Days" editable="bottom">
+                                    <field name="work_entry_type_id"/>
+                                    <field name="code"/>
+                                    <field name="number_of_days"/>
+                                    <field name="number_of_hours"/>
+                                    <field name="amount"/>
+                                    <field name="rate"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_payslip_view_search" model="ir.ui.view">
+        <field name="name">hr.payslip.search</field>
+        <field name="model">hr.payslip</field>
+        <field name="arch" type="xml">
+            <search string="Payslips">
+                <field name="employee_id"/>
+                <field name="number"/>
+                <field name="contract_id"/>
+                <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_verify" string="Waiting" domain="[('state', '=', 'verify')]"/>
+                <filter name="filter_done" string="Done" domain="[('state', '=', 'done')]"/>
+                <filter name="filter_posted" string="Posted" domain="[('move_id.state', '=', 'posted')]"/>
+                <separator/>
+                <filter name="filter_period" string="This Month" context="{'default_date_from': '...'}"
+                        domain="[('date_from', '>=', time.strftime('%Y-%m-01'))]"/>
+                <group>
+                    <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_structure" string="Structure" context="{'group_by': 'structure_type_id'}"/>
+                    <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hr_payslip" model="ir.actions.act_window">
+        <field name="name">Payslips</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="hr_payslip_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first payslip
+            </p>
+            <p>
+                Generate a payslip for an employee and period. Click "Compute
+                Sheet" to apply the salary rules, then "Confirm" to post the
+                automatic accrual journal entry.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_hr_payslip_input_type" model="ir.actions.act_window">
+        <field name="name">Payslip Input Types</field>
+        <field name="res_model">hr.payslip.input.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

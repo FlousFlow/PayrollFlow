@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Payroll as a standalone top-level app (same icon as Odoo Enterprise hr_payroll) -->
+    <menuitem id="menu_hr_payroll_root"
+              name="Payroll"
+              web_icon="ff_hr_payroll,static/description/icon.png"
+              sequence="40"
+              groups="ff_hr_payroll.group_hr_payroll_user"/>
+
+    <menuitem id="menu_hr_payslip"
+              name="Payslips"
+              parent="menu_hr_payroll_root"
+              action="action_hr_payslip"
+              sequence="10"/>
+
+    <menuitem id="menu_hr_payslip_run"
+              name="Payslip Batches"
+              parent="menu_hr_payroll_root"
+              action="action_hr_payslip_run"
+              sequence="15"/>
+
+    <menuitem id="menu_hr_contract"
+              name="Contracts"
+              parent="menu_hr_payroll_root"
+              action="action_hr_contract"
+              sequence="20"/>
+
+    <menuitem id="menu_hr_payslip_fine"
+              name="Fines"
+              parent="menu_hr_payroll_root"
+              action="action_hr_payslip_fine"
+              sequence="22"
+              groups="ff_hr_payroll.group_hr_payroll_user"/>
+
+    <menuitem id="menu_hr_salary_rule"
+              name="Salary Rules"
+              parent="menu_hr_payroll_root"
+              action="action_hr_salary_rule"
+              sequence="30"
+              groups="ff_hr_payroll.group_hr_payroll_manager"/>
+
+    <menuitem id="menu_hr_salary_rule_category"
+              name="Rule Categories"
+              parent="menu_hr_payroll_root"
+              action="action_hr_salary_rule_category"
+              sequence="40"
+              groups="ff_hr_payroll.group_hr_payroll_manager"/>
+
+    <menuitem id="menu_hr_payroll_structure"
+              name="Salary Structures"
+              parent="menu_hr_payroll_root"
+              action="action_hr_payroll_structure"
+              sequence="42"
+              groups="ff_hr_payroll.group_hr_payroll_manager"/>
+
+    <menuitem id="menu_hr_payslip_input_type"
+              name="Payslip Input Types"
+              parent="menu_hr_payroll_root"
+              action="action_hr_payslip_input_type"
+              sequence="50"
+              groups="ff_hr_payroll.group_hr_payroll_manager"/>
+
+    <menuitem id="menu_hr_payslip_register"
+              name="Payslip Register"
+              parent="menu_hr_payroll_root"
+              action="action_hr_payslip_register_wizard"
+              sequence="55"
+              groups="ff_hr_payroll.group_hr_payroll_user"/>
+</odoo>

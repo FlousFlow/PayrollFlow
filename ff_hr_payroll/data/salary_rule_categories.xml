@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Salary rule categories (per company 1 = default demo company) -->
+        <record id="category_basic" model="hr.salary.rule.category">
+            <field name="name">Basic</field>
+            <field name="code">BASIC</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="category_allowance" model="hr.salary.rule.category">
+            <field name="name">Allowance</field>
+            <field name="code">ALLOWANCE</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="category_deduction" model="hr.salary.rule.category">
+            <field name="name">Deduction</field>
+            <field name="code">DEDUCTION</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="category_company_contribution" model="hr.salary.rule.category">
+            <field name="name">Company Contribution</field>
+            <field name="code">COMPANY_CONTRIBUTION</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- Payslip input types (manual deductions) -->
+        <record id="input_advance" model="hr.payslip.input.type">
+            <field name="name">Advance</field>
+            <field name="code">INPUT.ADVANCE</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="input_loan" model="hr.payslip.input.type">
+            <field name="name">Loan Repayment</field>
+            <field name="code">INPUT.LOAN</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="input_fine" model="hr.payslip.input.type">
+            <field name="name">Fine / Penalty</field>
+            <field name="code">INPUT.FINE</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- Salary structures (mirror Enterprise: rules grouped per structure) -->
+        <record id="structure_employee" model="hr.payroll.structure">
+            <field name="name">Employee</field>
+            <field name="code">EMPLOYEE</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="structure_worker" model="hr.payroll.structure">
+            <field name="name">Worker</field>
+            <field name="code">WORKER</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="structure_manager" model="hr.payroll.structure">
+            <field name="name">Manager</field>
+            <field name="code">MANAGER</field>
+            <field name="sequence">30</field>
+        </record>
+
+    </data>
+</odoo>

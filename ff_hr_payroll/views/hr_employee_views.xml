@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Employee KPI / Goals tab -->
+    <record id="hr_employee_view_form_inherit_payroll" model="ir.ui.view">
+        <field name="name">hr.employee.view.form.inherit.payroll</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="KPI &amp; Goals" name="kpi_goals">
+                    <button name="action_create_kpi_goal" type="object"
+                            string="New KPI Goal" icon="fa-plus"
+                            class="btn-primary mb-2"/>
+                    <group>
+                        <group>
+                            <field name="kpi_bonus_total" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="kpi_goal_ids" readonly="1" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <field name="kpi_goal_ids" readonly="1">
+                        <list string="KPI Goals">
+                            <field name="definition_id"/>
+                            <field name="target_goal"/>
+                            <field name="current"/>
+                            <field name="completeness"/>
+                            <field name="target_bonus"/>
+                            <field name="kpi_bonus"/>
+                        </list>
+                    </field>
+                    <div class="text-muted">
+                        Manage the employee's goals from the Goals / Challenges app
+                        (Gamification). Goals marked as KPI with a target bonus are
+                        paid automatically by the payroll KPI bonus rule.
+                    </div>
+                </page>
+
+                <page string="Contracts" name="payroll_contracts">
+                    <button name="action_create_contract" type="object"
+                            string="New Contract" icon="fa-plus"
+                            class="btn-primary mb-2"/>
+                    <field name="contract_ids" readonly="1">
+                        <list string="Contracts">
+                            <field name="name"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="wage"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                    <div class="text-muted">
+                        Payroll contracts are managed here and in the Payroll app.
+                        (The native "Contract" fields in the Payroll tab of the
+                        employee form belong to the base HR app.)
+                    </div>
+                </page>
+
+                <page string="Sales &amp; Fines" name="sales_fines">
+                    <group string="Sales KPI / Commission">
+                        <group>
+                            <field name="sales_target_percent"/>
+                            <field name="sales_commission_rate"/>
+                        </group>
+                        <group>
+                            <field name="sales_currency_id" groups="base.group_multi_currency"/>
+                            <field name="user_id" string="Salesperson User"
+                                   help="The linked user whose confirmed sales are used."/>
+                        </group>
+                        <p class="text-muted">
+                            Monthly sales target = wage × target percent. Confirmed sales
+                            are read automatically from the linked user's sale orders
+                            (state = confirmed) within the payslip period.
+                        </p>
+                    </group>
+                    <group string="Fines / Penalties">
+                        <button name="%(ff_hr_payroll.action_hr_payslip_fine)d" type="action"
+                                string="New Fine" icon="fa-plus" class="btn-primary mb-2"
+                                context="{'default_employee_id': id}"/>
+                        <field name="fine_ids" readonly="1">
+                            <list string="Fines">
+                                <field name="name"/>
+                                <field name="date"/>
+                                <field name="date_from" optional="hide"/>
+                                <field name="date_to" optional="hide"/>
+                                <field name="amount" sum="Total"/>
+                                <field name="reason"/>
+                                <field name="state"/>
+                            </list>
+                        </field>
+                        <p class="text-muted">
+                            Fines confirmed (status = Done) are deducted automatically
+                            from the employee's payslip for the matching period.
+                        </p>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

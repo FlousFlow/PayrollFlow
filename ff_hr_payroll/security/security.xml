@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Odoo 19 privilege (replaces the old category_id on res.groups) -->
+        <record id="res_groups_privilege_ff_hr_payroll" model="res.groups.privilege">
+            <field name="name">Payroll</field>
+            <field name="sequence">60</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+        </record>
+
+        <!-- Security groups -->
+        <record id="group_hr_payroll_user" model="res.groups">
+            <field name="name">Payroll / User</field>
+            <field name="sequence">10</field>
+            <field name="privilege_id" ref="res_groups_privilege_ff_hr_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr.group_hr_user'))]"/>
+        </record>
+
+        <record id="group_hr_payroll_manager" model="res.groups">
+            <field name="name">Payroll / Manager</field>
+            <field name="sequence">20</field>
+            <field name="privilege_id" ref="res_groups_privilege_ff_hr_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('group_hr_payroll_user'))]"/>
+        </record>
+
+        <!-- Record rules: multi-company isolation -->
+        <record id="rule_hr_contract_company" model="ir.rule">
+            <field name="name">HR Contract: multi-company</field>
+            <field name="model_id" ref="model_hr_contract"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_hr_salary_rule_category_company" model="ir.rule">
+            <field name="name">Salary Rule Category: multi-company</field>
+            <field name="model_id" ref="model_hr_salary_rule_category"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_hr_salary_rule_company" model="ir.rule">
+            <field name="name">Salary Rule: multi-company</field>
+            <field name="model_id" ref="model_hr_salary_rule"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_hr_payslip_company" model="ir.rule">
+            <field name="name">Payslip: multi-company</field>
+            <field name="model_id" ref="model_hr_payslip"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_hr_payslip_input_type_company" model="ir.rule">
+            <field name="name">Payslip Input Type: multi-company</field>
+            <field name="model_id" ref="model_hr_payslip_input_type"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_hr_payroll_structure_company" model="ir.rule">
+            <field name="name">Salary Structure: multi-company</field>
+            <field name="model_id" ref="model_hr_payroll_structure"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_hr_payslip_run_company" model="ir.rule">
+            <field name="name">Payslip Batch: multi-company</field>
+            <field name="model_id" ref="model_hr_payslip_run"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_hr_contribution_register_company" model="ir.rule">
+            <field name="name">Contribution Register: multi-company</field>
+            <field name="model_id" ref="model_hr_contribution_register"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_hr_payslip_fine_company" model="ir.rule">
+            <field name="name">HR Fine: multi-company</field>
+            <field name="model_id" ref="model_hr_payslip_fine"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_hr_payslip_tax_bracket_company" model="ir.rule">
+            <field name="name">Tax Bracket: multi-company</field>
+            <field name="model_id" ref="model_hr_payslip_tax_bracket"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="action_report_hr_payslip" model="ir.actions.report">
+            <field name="name">Payslip</field>
+            <field name="model">hr.payslip</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">ff_hr_payroll.report_hr_payslip</field>
+            <field name="report_file">ff_hr_payroll.report_hr_payslip</field>
+            <field name="print_report_name">'Payslip - %s - %s' % ((object.employee_id.name or '').replace('/', ''), object.date_to.strftime('%m-%Y') if object.date_to else '')</field>
+            <field name="binding_model_id" ref="model_hr_payslip"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_hr_payslip">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="payslip">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h2>Payslip</h2>
+                                    <div t-if="payslip.company_id">
+                                        <strong t-esc="payslip.company_id.name"/>
+                                    </div>
+                                    <div t-if="payslip.company_id and payslip.company_id.vat">
+                                        Tax ID: <span t-esc="payslip.company_id.vat"/>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <div><strong t-esc="payslip.number or payslip.name"/></div>
+                                    <div><span t-esc="payslip.date_from or ''"/> - <span t-esc="payslip.date_to or ''"/></div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 mb-2" style="border-bottom: 2px solid #333;">
+                                <h4>Employee</h4>
+                            </div>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="fw-bold">Employee</td>
+                                    <td t-esc="payslip.employee_id.name or ''"/>
+                                    <td class="fw-bold">Contract</td>
+                                    <td t-esc="payslip.contract_id.name or ''"/>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Department</td>
+                                    <td t-esc="payslip.employee_id.department_id.name or ''"/>
+                                    <td class="fw-bold">Job Position</td>
+                                    <td t-esc="payslip.employee_id.job_id.name or ''"/>
+                                </tr>
+                            </table>
+
+                            <div class="mt-4 mb-2" style="border-bottom: 2px solid #333;">
+                                <h4>Payslip Lines</h4>
+                            </div>
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th class="text-end">Quantity</th>
+                                        <th class="text-end">Rate</th>
+                                        <th class="text-end">Amount</th>
+                                        <th class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="payslip.line_ids" t-as="line">
+                                        <tr>
+                                            <td>
+                                                <span t-esc="line.name or ''"/>
+                                                <div class="text-muted small">
+                                                    <span t-esc="line.category_id.name or ''"/>
+                                                    <span t-if="line.code"> (<span t-esc="line.code"/>)</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-end" t-esc="line.quantity"/>
+                                            <td class="text-end" t-esc="line.rate"/>
+                                            <td class="text-end" t-esc="line.amount"/>
+                                            <td class="text-end" t-esc="line.total"/>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <div class="mt-4">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td class="fw-bold">Gross Wage</td>
+                                        <td class="text-end" t-esc="payslip.gross_wage"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Total Deductions</td>
+                                        <td class="text-end" t-esc="payslip.total_deductions"/>
+                                    </tr>
+                                    <tr class="fw-bold">
+                                        <td>Net Wage</td>
+                                        <td class="text-end" style="font-size: 1.2em;">
+                                            <span t-esc="payslip.net_wage"/>
+                                            <span t-esc="payslip.currency_id.symbol or ''"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="mt-4 pt-2" style="border-top: 1px solid #ccc;">
+                                <table class="w-100">
+                                    <tr>
+                                        <td class="w-50">
+                                            <div class="pt-4" style="border-top: 1px solid #333; width: 60%;">Employee Signature</div>
+                                        </td>
+                                        <td class="w-50">
+                                            <div class="pt-4" style="border-top: 1px solid #333; width: 60%;">HR / Payroll Officer</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- Email template used by the "Send by Email" button on the payslip -->
+        <record id="email_template_hr_payslip" model="mail.template">
+            <field name="name">Payslip: Send by Email</field>
+            <field name="model_id" ref="model_hr_payslip"/>
+            <field name="email_from">${object.company_id.partner_id.email or ''}</field>
+            <field name="email_to">${object.employee_id.work_email or ''}</field>
+            <field name="subject">Payslip ${object.number or object.name} - ${object.date_to}</field>
+            <field name="report_template_ids" eval="[(4, ref('action_report_hr_payslip'))]"/>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Dear ${object.employee_id.name or ''},</p>
+                    <p>
+                        Please find attached your payslip for the period
+                        ${object.date_from} to ${object.date_to}.
+                    </p>
+                    <p>
+                        Net wage: <strong>${object.net_wage} ${object.currency_id.symbol or ''}</strong><br/>
+                        Gross wage: ${object.gross_wage} ${object.currency_id.symbol or ''}<br/>
+                        Deductions: ${object.total_deductions} ${object.currency_id.symbol or ''}
+                    </p>
+                    <p>Best regards,<br/>${object.company_id.name or ''}</p>
+                </div>
+            </field>
+        </record>
+
+    </data>
+</odoo>
