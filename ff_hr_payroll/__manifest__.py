@@ -74,6 +74,7 @@ feature optionally reads ``sale.order`` if the ``sale`` module is installed.
         'reports/hr_payslip_reports.xml',
         'reports/hr_payslip_register_reports.xml',
     ],
+    'images': ['static/description/images/cover_screenshot.png'],
     'installable': True,
     'application': True,
     'auto_install': False,
