@@ -1,0 +1,126 @@
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan" style="color:#1a7f6b;">Flous Flow HR Payroll</h2>
+        <h3 class="oe_slogan">Flexible payroll engine for Odoo 19 Community</h3>
+        <p class="oe_mt32" style="font-size:14px;">
+            A full payroll engine for <b>Odoo 19 Community</b> — the native
+            <code>hr_payroll</code> app is Enterprise-only. It mirrors the standard Odoo
+            payroll architecture so the data model, workflow and accounting behaviour feel
+            familiar, <b>without requiring the paid module</b>. Built for Egyptian
+            companies, with the Egyptian payroll taxes (social insurance + income tax) and
+            the company document layout included.
+        </p>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Main Features</h2>
+        <div class="oe_span6">
+            <ul>
+                <li>Employee Contracts with wage, schedule type, dates and salary structure.</li>
+                <li>Flexible Salary Rules: condition + amount (fixed / percentage / Python).</li>
+                <li>Unlimited deduction rules built from the UI (absence, penalties, ...).</li>
+                <li>Enterprise-style Python rules with <code>result</code> / <code>result_rate</code> / <code>result_qty</code>.</li>
+                <li>Hierarchical salary rules; salary structures with parent inheritance.</li>
+                <li>Payslips with computed lines, manual inputs (advances, loans, fines) and worked days.</li>
+                <li>Payslip Batches: one payslip per employee with an open contract.</li>
+            </ul>
+        </div>
+        <div class="oe_span6">
+            <ul>
+                <li>Automatic accrual posting (Dr salary expense / Cr salary payable), fiscal-lock aware.</li>
+                <li>Attendance / Time Off integration: paid leave, unpaid leave, absence.</li>
+                <li>KPI bonuses through the native Gamification app.</li>
+                <li>Sales KPI / commission read from the linked user's confirmed sale orders.</li>
+                <li>HR Fines: record penalties and deduct them automatically.</li>
+                <li>Egyptian payroll taxes (country-dependent, toggleable): social insurance + income tax with editable annual brackets.</li>
+                <li>Payslip Register: aggregate report (PDF + Excel).</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan" style="color:#1a7f6b;">Automatic Accrual Posting</h2>
+        <div class="oe_span6">
+            <p class="oe_mt32" style="font-size:14px;">
+                When a payslip is confirmed, the module automatically posts a balanced
+                journal entry: <b>Dr salary expense / Cr salary payable</b>, respecting the
+                fiscal lock dates. Salary rules can carry their own accounting accounts
+                (expense, payable, tax, loan), with sensible company-level fallbacks.
+            </p>
+        </div>
+        <div class="oe_span6">
+            <p class="oe_mt32" style="font-size:14px;">
+                Employer contributions (social insurance employer share) are posted
+                separately: <b>Dr social insurance expense / Cr social insurance payable</b>.
+                Everything is configurable from <i>Settings → Payroll</i> and respects
+                multi-company isolation.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Egyptian Payroll Taxes (toggleable)</h2>
+        <div class="oe_span6">
+            <p class="oe_mt32" style="font-size:14px;">
+                A master switch enables or disables payroll tax deductions per company
+                (defaults are enabled only for countries with salary taxes, e.g. Egypt).
+                When enabled, the module generates the deduction rules automatically:
+            </p>
+            <ul>
+                <li>Social insurance — employee share (deducted from the payslip).</li>
+                <li>Social insurance — employer share (company contribution, posted separately).</li>
+                <li>Income tax on salaries — progressive annual brackets, fully editable from the screen.</li>
+            </ul>
+        </div>
+        <div class="oe_span6">
+            <p class="oe_mt32" style="font-size:14px;">
+                Toggle the switch off and all tax deductions disappear from the payslip
+                without deleting the rules — ideal for countries without payroll taxes.
+                The tax base excludes the employer contribution, and the payable / expense
+                accounts are configurable per company.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan" style="color:#1a7f6b;">Reports &amp; Emailing</h2>
+        <div class="oe_span6">
+            <ul>
+                <li><b>Payslip PDF</b> — per employee, with the company document layout and Arabic labels.</li>
+                <li><b>Payslip Register</b> (PDF + Excel) — aggregate report for a period, one click from the wizard.</li>
+                <li><b>Send by Email</b> — one-click email with the payslip PDF attached.</li>
+            </ul>
+        </div>
+        <div class="oe_span6">
+            <ul>
+                <li>Multi-company support with <code>_check_company_auto</code>.</li>
+                <li>Configurable accounts (no hardcoded chart of accounts).</li>
+                <li>Full audit trail via Chatter on contracts, payslips and batches.</li>
+                <li><b>Arabic + English</b> translations included.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Requirements</h2>
+        <p class="oe_mt32" style="font-size:14px; text-align:center;">
+            Odoo 19 Community. Depends on <code>hr</code>, <code>hr_work_entry</code>,
+            <code>hr_attendance</code>, <code>hr_holidays</code>, <code>hr_gamification</code>,
+            <code>account</code> and <code>mail</code>. The sales KPI feature optionally reads
+            <code>sale.order</code> if the <code>sale</code> module is installed.
+        </p>
+        <p style="text-align:center; color:#777; margin-top:24px;">
+            License: LGPL-3 — Flous Flow / Mohamed Gamal
+        </p>
+    </div>
+</section>
