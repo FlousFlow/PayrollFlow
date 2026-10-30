@@ -1,6 +1,6 @@
 # Flous Flow HR Payroll
 
-A full payroll engine for **Odoo 19 Community** (the native `hr_payroll` app is
+A full payroll engine for **Odoo 20 Community** (the native `hr_payroll` app is
 Enterprise-only). It mirrors the standard Odoo payroll architecture so the data
 model, workflow and accounting behaviour feel familiar, without requiring the
 paid app.
@@ -14,7 +14,7 @@ company document layout built in.
 ## ✨ Features
 
 ### Payroll core
-- **Employee Contracts** (`hr.contract`) — wage, schedule (monthly / weekly /
+- **Employee Contracts** (`hr.version`) — wage, schedule (monthly / weekly /
   daily / hourly), start/end dates, salary structure, state workflow.
 - **Salary Rule Categories** — Basic / Allowances / Deductions / Company
   Contributions.

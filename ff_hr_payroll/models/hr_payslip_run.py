@@ -46,11 +46,13 @@ class HrPayslipRun(models.Model):
         for run in self:
             payslips = self.env['hr.payslip']
             for employee in run.employee_ids:
-                contract = self.env['hr.contract'].search([
+                contract = self.env['hr.version'].search([
                     ('employee_id', '=', employee.id),
                     ('state', '=', 'open'),
-                    ('date_start', '<=', run.date_end),
-                ], order='date_start desc', limit=1)
+                    ('contract_date_start', '<=', run.date_end),
+                    '|', ('contract_date_end', '=', False),
+                         ('contract_date_end', '>=', run.date_start),
+                ], order='contract_date_start desc', limit=1)
                 if not contract:
                     continue
                 payslips |= self.env['hr.payslip'].create({

@@ -5,7 +5,7 @@
 Flous Flow HR Payroll
 =====================
 
-A full payroll engine for **Odoo 19 Community** (the native ``hr_payroll`` app
+A full payroll engine for **Odoo 20 Community** (the native ``hr_payroll`` app
 is Enterprise-only). It mirrors the standard Odoo payroll architecture so the
 data model, workflow and accounting behaviour feel familiar, without requiring
 the paid module. Built for Egyptian companies, with the Egyptian payroll taxes
@@ -14,7 +14,7 @@ the paid module. Built for Egyptian companies, with the Egyptian payroll taxes
 Features
 --------
 
-* **Employee Contracts** (``hr.contract``) — wage, schedule type (monthly /
+* **Employee Contracts** (``hr.version``) — wage, schedule type (monthly /
   weekly / daily / hourly), start/end dates, salary structure, state workflow.
 * **Salary Rules** (``hr.salary.rule``) — the flexible calculation engine:
   every rule has a condition (always / range / Python) and an amount (fixed /
@@ -73,7 +73,7 @@ Reports
 Requirements
 ------------
 
-Odoo 19 Community. Depends on ``hr``, ``hr_work_entry``, ``hr_attendance``,
+Odoo 20 Community. Depends on ``hr``, ``hr_work_entry``, ``hr_attendance``,
 ``hr_holidays``, ``hr_gamification``, ``account`` and ``mail``.
 The sales KPI feature optionally reads ``sale.order`` if the ``sale`` module is
 installed.

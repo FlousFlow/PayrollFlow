@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Flous Flow HR Payroll',
-    'version': '19.0.1.0.0',
+    'version': '20.0.1.0.0',
     'category': 'Human Resources/Payroll',
-    'summary': 'Flexible payroll engine for Odoo 19 Community: contracts, salary rules, payslips, configurable deductions and automatic accrual posting',
+    'summary': 'Flexible payroll engine for Odoo 20 Community: contracts, salary rules, payslips, configurable deductions and automatic accrual posting',
     'description': """
 Flous Flow HR Payroll
 =====================
 
-A full payroll engine for **Odoo 19 Community** (``hr_payroll`` is
+A full payroll engine for **Odoo 20 Community** (``hr_payroll`` is
 Enterprise-only). It mirrors the standard Odoo payroll architecture so the data
 model, workflow and accounting behaviour match what you already know from the
 Enterprise app, without requiring the paid module. Built for Egyptian
@@ -18,7 +18,7 @@ the company document layout included.
 Main features
 -------------
 
-* Employee Contracts (``hr.contract``) with wage, schedule, dates and salary structure.
+* Employee Contracts (``hr.version``) with wage, schedule, dates and salary structure.
 * Flexible Salary Rules (``hr.salary.rule``): condition + amount (fixed / percentage / Python).
 * Unlimited deduction rules built from the UI (absence, penalties, ...).
 * Enterprise-style Python rules with ``result`` / ``result_rate`` / ``result_qty``.
@@ -39,7 +39,7 @@ Main features
 Requirements
 ------------
 
-Odoo 19 Community. Depends on ``hr``, ``hr_work_entry``, ``hr_attendance``,
+Odoo 20 Community. Depends on ``hr``, ``hr_work_entry``, ``hr_attendance``,
 ``hr_holidays``, ``hr_gamification``, ``account`` and ``mail``. The sales KPI
 feature optionally reads ``sale.order`` if the ``sale`` module is installed.
 """,
@@ -57,7 +57,7 @@ feature optionally reads ``sale.order`` if the ``sale`` module is installed.
     ],
     'data': [
         'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/salary_rule_categories.xml',
         'data/hr_payslip_fine_data.xml',
         'views/hr_contract_views.xml',

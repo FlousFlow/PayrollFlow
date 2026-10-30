@@ -7,7 +7,6 @@
             <field name="model">hr.payslip</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">ff_hr_payroll.report_hr_payslip_register</field>
-            <field name="report_file">ff_hr_payroll.report_hr_payslip_register</field>
             <field name="binding_model_id" ref="model_hr_payslip"/>
             <field name="binding_type">report</field>
         </record>
@@ -18,12 +17,12 @@
                     <div class="page">
                         <h2>Payslip Register</h2>
                         <div t-if="docs and docs[0].company_id">
-                            <strong t-esc="docs[0].company_id.name"/>
+                            <strong t-out="docs[0].company_id.name"/>
                         </div>
                         <div t-if="docs">
                             Period:
-                            <span t-esc="min(docs.mapped('date_from')) or ''"/> -
-                            <span t-esc="max(docs.mapped('date_to')) or ''"/>
+                            <span t-out="min(docs.mapped('date_from')) or ''"/> -
+                            <span t-out="max(docs.mapped('date_to')) or ''"/>
                         </div>
 
                         <table class="table table-sm mt-3">
@@ -37,23 +36,23 @@
                             </thead>
                             <tbody>
                                 <tr t-foreach="docs" t-as="p">
-                                    <td t-esc="p.employee_id.name or ''"/>
-                                    <td class="text-end" t-esc="p.gross_wage"/>
-                                    <td class="text-end" t-esc="p.total_deductions"/>
-                                    <td class="text-end" t-esc="p.net_wage"/>
+                                    <td t-out="p.employee_id.name or ''"/>
+                                    <td class="text-end" t-out="p.gross_wage"/>
+                                    <td class="text-end" t-out="p.total_deductions"/>
+                                    <td class="text-end" t-out="p.net_wage"/>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr t-if="docs">
                                     <th>Total</th>
                                     <th class="text-end">
-                                        <t t-esc="sum(d.gross_wage for d in docs)"/>
+                                        <t t-out="sum(d.gross_wage for d in docs)"/>
                                     </th>
                                     <th class="text-end">
-                                        <t t-esc="sum(d.total_deductions for d in docs)"/>
+                                        <t t-out="sum(d.total_deductions for d in docs)"/>
                                     </th>
                                     <th class="text-end">
-                                        <t t-esc="sum(d.net_wage for d in docs)"/>
+                                        <t t-out="sum(d.net_wage for d in docs)"/>
                                     </th>
                                 </tr>
                             </tfoot>

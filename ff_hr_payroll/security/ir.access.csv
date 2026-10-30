@@ -1,0 +1,38 @@
+id,name,model_id/id,group_id/id,operation,domain
+access_hr_contract_user,hr.contract.user,hr.model_hr_version,ff_hr_payroll.group_hr_payroll_user,cru,
+access_hr_contract_manager,hr.contract.manager,hr.model_hr_version,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_salary_rule_category_user,hr.salary.rule.category.user,ff_hr_payroll.model_hr_salary_rule_category,ff_hr_payroll.group_hr_payroll_user,r,
+access_hr_salary_rule_category_manager,hr.salary.rule.category.manager,ff_hr_payroll.model_hr_salary_rule_category,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_salary_rule_user,hr.salary.rule.user,ff_hr_payroll.model_hr_salary_rule,ff_hr_payroll.group_hr_payroll_user,r,
+access_hr_salary_rule_manager,hr.salary.rule.manager,ff_hr_payroll.model_hr_salary_rule,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payslip_user,hr.payslip.user,ff_hr_payroll.model_hr_payslip,ff_hr_payroll.group_hr_payroll_user,cru,
+access_hr_payslip_manager,hr.payslip.manager,ff_hr_payroll.model_hr_payslip,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payslip_line_user,hr.payslip.line.user,ff_hr_payroll.model_hr_payslip_line,ff_hr_payroll.group_hr_payroll_user,r,
+access_hr_payslip_line_manager,hr.payslip.line.manager,ff_hr_payroll.model_hr_payslip_line,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payslip_input_user,hr.payslip.input.user,ff_hr_payroll.model_hr_payslip_input,ff_hr_payroll.group_hr_payroll_user,cru,
+access_hr_payslip_input_manager,hr.payslip.input.manager,ff_hr_payroll.model_hr_payslip_input,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payslip_input_type_user,hr.payslip.input.type.user,ff_hr_payroll.model_hr_payslip_input_type,ff_hr_payroll.group_hr_payroll_user,r,
+access_hr_payslip_input_type_manager,hr.payslip.input.type.manager,ff_hr_payroll.model_hr_payslip_input_type,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payslip_worked_days_user,hr.payslip.worked.days.user,ff_hr_payroll.model_hr_payslip_worked_days,ff_hr_payroll.group_hr_payroll_user,r,
+access_hr_payslip_worked_days_manager,hr.payslip.worked.days.manager,ff_hr_payroll.model_hr_payslip_worked_days,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payroll_structure_user,hr.payroll.structure.user,ff_hr_payroll.model_hr_payroll_structure,ff_hr_payroll.group_hr_payroll_user,r,
+access_hr_payroll_structure_manager,hr.payroll.structure.manager,ff_hr_payroll.model_hr_payroll_structure,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payslip_run_user,hr.payslip.run.user,ff_hr_payroll.model_hr_payslip_run,ff_hr_payroll.group_hr_payroll_user,cru,
+access_hr_payslip_run_manager,hr.payslip.run.manager,ff_hr_payroll.model_hr_payslip_run,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payslip_fine_user,hr.payslip.fine.user,ff_hr_payroll.model_hr_payslip_fine,ff_hr_payroll.group_hr_payroll_user,cru,
+access_hr_payslip_fine_manager,hr.payslip.fine.manager,ff_hr_payroll.model_hr_payslip_fine,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_contribution_register_user,hr.contribution.register.user,ff_hr_payroll.model_hr_contribution_register,ff_hr_payroll.group_hr_payroll_user,r,
+access_hr_contribution_register_manager,hr.contribution.register.manager,ff_hr_payroll.model_hr_contribution_register,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payslip_tax_bracket_user,hr.payslip.tax.bracket.user,ff_hr_payroll.model_hr_payslip_tax_bracket,ff_hr_payroll.group_hr_payroll_user,r,
+access_hr_payslip_tax_bracket_manager,hr.payslip.tax.bracket.manager,ff_hr_payroll.model_hr_payslip_tax_bracket,ff_hr_payroll.group_hr_payroll_manager,crud,
+access_hr_payslip_register_wizard_user,hr.payslip.register.wizard.user,ff_hr_payroll.model_hr_payslip_register_wizard,ff_hr_payroll.group_hr_payroll_user,crud,
+rule_hr_contract_company,HR Contract: multi-company,hr.model_hr_version,,crud,"[('company_id', 'in', company_ids)]"
+rule_hr_salary_rule_category_company,Salary Rule Category: multi-company,ff_hr_payroll.model_hr_salary_rule_category,,crud,"[('company_id', 'in', company_ids)]"
+rule_hr_salary_rule_company,Salary Rule: multi-company,ff_hr_payroll.model_hr_salary_rule,,crud,"[('company_id', 'in', company_ids)]"
+rule_hr_payslip_company,Payslip: multi-company,ff_hr_payroll.model_hr_payslip,,crud,"[('company_id', 'in', company_ids)]"
+rule_hr_payslip_input_type_company,Payslip Input Type: multi-company,ff_hr_payroll.model_hr_payslip_input_type,,crud,"[('company_id', 'in', company_ids)]"
+rule_hr_payroll_structure_company,Salary Structure: multi-company,ff_hr_payroll.model_hr_payroll_structure,,crud,"[('company_id', 'in', company_ids)]"
+rule_hr_payslip_run_company,Payslip Batch: multi-company,ff_hr_payroll.model_hr_payslip_run,,crud,"[('company_id', 'in', company_ids)]"
+rule_hr_contribution_register_company,Contribution Register: multi-company,ff_hr_payroll.model_hr_contribution_register,,crud,"[('company_id', 'in', company_ids)]"
+rule_hr_payslip_fine_company,HR Fine: multi-company,ff_hr_payroll.model_hr_payslip_fine,,crud,"[('company_id', 'in', company_ids)]"
+rule_hr_payslip_tax_bracket_company,Tax Bracket: multi-company,ff_hr_payroll.model_hr_payslip_tax_bracket,,crud,"[('company_id', 'in', company_ids)]"

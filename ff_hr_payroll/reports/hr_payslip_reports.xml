@@ -7,7 +7,6 @@
             <field name="model">hr.payslip</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">ff_hr_payroll.report_hr_payslip</field>
-            <field name="report_file">ff_hr_payroll.report_hr_payslip</field>
             <field name="print_report_name">'Payslip - %s - %s' % ((object.employee_id.name or '').replace('/', ''), object.date_to.strftime('%m-%Y') if object.date_to else '')</field>
             <field name="binding_model_id" ref="model_hr_payslip"/>
             <field name="binding_type">report</field>
@@ -22,15 +21,15 @@
                                 <div class="col-6">
                                     <h2>Payslip</h2>
                                     <div t-if="payslip.company_id">
-                                        <strong t-esc="payslip.company_id.name"/>
+                                        <strong t-out="payslip.company_id.name"/>
                                     </div>
                                     <div t-if="payslip.company_id and payslip.company_id.vat">
-                                        Tax ID: <span t-esc="payslip.company_id.vat"/>
+                                        Tax ID: <span t-out="payslip.company_id.vat"/>
                                     </div>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <div><strong t-esc="payslip.number or payslip.name"/></div>
-                                    <div><span t-esc="payslip.date_from or ''"/> - <span t-esc="payslip.date_to or ''"/></div>
+                                    <div><strong t-out="payslip.number or payslip.name"/></div>
+                                    <div><span t-out="payslip.date_from or ''"/> - <span t-out="payslip.date_to or ''"/></div>
                                 </div>
                             </div>
 
@@ -40,15 +39,15 @@
                             <table class="table table-sm">
                                 <tr>
                                     <td class="fw-bold">Employee</td>
-                                    <td t-esc="payslip.employee_id.name or ''"/>
+                                    <td t-out="payslip.employee_id.name or ''"/>
                                     <td class="fw-bold">Contract</td>
-                                    <td t-esc="payslip.contract_id.name or ''"/>
+                                    <td t-out="payslip.contract_id.name or ''"/>
                                 </tr>
                                 <tr>
                                     <td class="fw-bold">Department</td>
-                                    <td t-esc="payslip.employee_id.department_id.name or ''"/>
+                                    <td t-out="payslip.employee_id.department_id.name or ''"/>
                                     <td class="fw-bold">Job Position</td>
-                                    <td t-esc="payslip.employee_id.job_id.name or ''"/>
+                                    <td t-out="payslip.employee_id.job_id.name or ''"/>
                                 </tr>
                             </table>
 
@@ -69,16 +68,16 @@
                                     <t t-foreach="payslip.line_ids" t-as="line">
                                         <tr>
                                             <td>
-                                                <span t-esc="line.name or ''"/>
+                                                <span t-out="line.name or ''"/>
                                                 <div class="text-muted small">
-                                                    <span t-esc="line.category_id.name or ''"/>
-                                                    <span t-if="line.code"> (<span t-esc="line.code"/>)</span>
+                                                    <span t-out="line.category_id.name or ''"/>
+                                                    <span t-if="line.code"> (<span t-out="line.code"/>)</span>
                                                 </div>
                                             </td>
-                                            <td class="text-end" t-esc="line.quantity"/>
-                                            <td class="text-end" t-esc="line.rate"/>
-                                            <td class="text-end" t-esc="line.amount"/>
-                                            <td class="text-end" t-esc="line.total"/>
+                                            <td class="text-end" t-out="line.quantity"/>
+                                            <td class="text-end" t-out="line.rate"/>
+                                            <td class="text-end" t-out="line.amount"/>
+                                            <td class="text-end" t-out="line.total"/>
                                         </tr>
                                     </t>
                                 </tbody>
@@ -88,17 +87,17 @@
                                 <table class="table table-sm">
                                     <tr>
                                         <td class="fw-bold">Gross Wage</td>
-                                        <td class="text-end" t-esc="payslip.gross_wage"/>
+                                        <td class="text-end" t-out="payslip.gross_wage"/>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">Total Deductions</td>
-                                        <td class="text-end" t-esc="payslip.total_deductions"/>
+                                        <td class="text-end" t-out="payslip.total_deductions"/>
                                     </tr>
                                     <tr class="fw-bold">
                                         <td>Net Wage</td>
                                         <td class="text-end" style="font-size: 1.2em;">
-                                            <span t-esc="payslip.net_wage"/>
-                                            <span t-esc="payslip.currency_id.symbol or ''"/>
+                                            <span t-out="payslip.net_wage"/>
+                                            <span t-out="payslip.currency_id.symbol or ''"/>
                                         </td>
                                     </tr>
                                 </table>

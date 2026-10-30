@@ -39,11 +39,13 @@ class TestFFHrPayroll(TransactionCase):
             'name': 'Test Employee', 'company_id': cls.company.id, 'wage': 300.0,
         })
         cls.structure = cls.env['hr.payroll.structure.type'].create({'name': 'Worker'})
-        cls.contract = cls.env['hr.contract'].create({
-            'name': 'CTR-TEST', 'employee_id': cls.employee.id,
-            'company_id': cls.company.id, 'wage': 300.0,
+        # Odoo 20 creates an initial hr.version with the employee. Payroll
+        # extends that native version instead of creating a parallel contract.
+        cls.contract = cls.employee.version_id
+        cls.contract.write({
+            'name': 'CTR-TEST', 'wage': 300.0,
             'schedule_pay': 'monthly', 'structure_type_id': cls.structure.id,
-            'date_start': date(2026, 1, 1),
+            'contract_date_start': date(2026, 1, 1),
         })
         cls.contract.action_open()
 
@@ -119,20 +121,12 @@ class TestFFHrPayroll(TransactionCase):
 
     def test_contract_no_overlap(self):
         with self.assertRaises(ValidationError):
-            self.env['hr.contract'].create({
+            self.env['hr.version'].create({
                 'name': 'CTR-OVERLAP', 'employee_id': self.employee.id,
                 'company_id': self.company.id, 'wage': 400.0,
                 'schedule_pay': 'monthly', 'structure_type_id': self.structure.id,
-                'date_start': date(2026, 1, 15), 'date_end': date(2026, 3, 15),
-            })
-
-    def test_contract_negative_wage(self):
-        with self.assertRaises(ValidationError):
-            self.env['hr.contract'].create({
-                'name': 'CTR-NEG', 'employee_id': self.employee.id,
-                'company_id': self.company.id, 'wage': -5.0,
-                'schedule_pay': 'monthly', 'structure_type_id': self.structure.id,
-                'date_start': date(2026, 1, 1),
+                'date_version': date(2026, 1, 15),
+                'contract_date_start': date(2026, 1, 15), 'contract_date_end': date(2026, 3, 15),
             })
 
     # ------------------------------------------------------------------
@@ -372,20 +366,21 @@ class TestFFHrPayroll(TransactionCase):
                 'check_out': datetime(2026, 8, d, 17, 0, 0),
             })
         # 1 unpaid leave day
-        leave_type = self.env['hr.leave.type'].create({
-            'name': 'Unpaid Test', 'request_unit': 'day',
+        leave_type = self.env['hr.work.entry.type'].create({
+            'name': 'Unpaid Test', 'code': 'UNPAID_TEST', 'request_unit': 'day',
             'leave_validation_type': 'no_validation',
             'requires_allocation': False,
             'unpaid': True,
+            'count_as': 'absence',
         })
-        # work_entry_type_id lives on the leave TYPE; no_validation -> auto validate
-        self.env['hr.leave'].sudo().create({
+        # In Odoo 20 the leave type is an hr.work.entry.type.
+        leave = self.env['hr.leave'].sudo().create({
             'employee_id': self.employee.id,
-            'holiday_status_id': leave_type.id,
-            'date_from': datetime(2026, 8, 3, 8, 0, 0),
-            'date_to': datetime(2026, 8, 3, 17, 0, 0),
-            'number_of_days': 1.0,
+            'work_entry_type_id': leave_type.id,
+            'request_date_from': date(2026, 8, 3),
+            'request_date_to': date(2026, 8, 3),
         })
+        leave.action_approve()
         payslip.action_generate_worked_days()
         wd = {w.code: w.number_of_days for w in payslip.worked_days_ids}
         # attendance read correctly

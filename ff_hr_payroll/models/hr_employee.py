@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 
 
 class HrEmployee(models.Model):
@@ -7,9 +7,9 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
     contract_ids = fields.One2many(
-        'hr.contract', 'employee_id', string="Contracts")
+        'hr.version', 'employee_id', string="Contracts")
     current_contract_id = fields.Many2one(
-        'hr.contract', string="Current Contract",
+        'hr.version', string="Current Contract",
         compute='_compute_current_contract_id', store=True)
     payslip_count = fields.Integer(
         string="Payslip Count", compute='_compute_payslip_count')
@@ -29,13 +29,14 @@ class HrEmployee(models.Model):
     fine_ids = fields.One2many(
         'hr.payslip.fine', 'employee_id', string="Fines")
 
-    @api.depends('contract_ids.state', 'contract_ids.date_start')
+    @api.depends('contract_ids.state', 'contract_ids.contract_date_start')
     def _compute_current_contract_id(self):
         for employee in self:
-            contract = self.env['hr.contract'].search([
+            contract = self.env['hr.version'].search([
                 ('employee_id', '=', employee.id),
                 ('state', '=', 'open'),
-            ], order='date_start desc', limit=1)
+                ('contract_date_start', '!=', False),
+            ], order='contract_date_start desc', limit=1)
             employee.current_contract_id = contract.id
 
     def _compute_payslip_count(self):
@@ -68,15 +69,15 @@ class HrEmployee(models.Model):
     def action_create_contract(self):
         """Open a new payroll contract form for this employee."""
         self.ensure_one()
-        contract = self.env['hr.contract'].create({
+        contract = self.env['hr.version'].create({
             'employee_id': self.id,
-            'company_id': self.company_id.id or self.env.company.id,
-            'date_start': fields.Date.today(),
+            'contract_date_start': False,
+            'state': 'draft',
             'name': _('New'),
         })
         return {
             'type': 'ir.actions.act_window',
-            'res_model': 'hr.contract',
+            'res_model': 'hr.version',
             'res_id': contract.id,
             'view_mode': 'form',
             'target': 'current',

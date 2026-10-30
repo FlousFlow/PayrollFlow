@@ -20,5 +20,5 @@ class HrPayslipWorkedDays(models.Model):
                           help="Computed amount for these days (used by rules via worked_days).")
     rate = fields.Float(string="Rate (%)", digits=(16, 2), default=100.0)
     contract_id = fields.Many2one(
-        'hr.contract', string="Contract",
+        'hr.version', string="Contract",
         related='payslip_id.contract_id', store=True)

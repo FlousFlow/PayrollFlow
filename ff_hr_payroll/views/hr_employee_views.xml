@@ -43,8 +43,8 @@
                     <field name="contract_ids" readonly="1">
                         <list string="Contracts">
                             <field name="name"/>
-                            <field name="date_start"/>
-                            <field name="date_end"/>
+                            <field name="contract_date_start"/>
+                            <field name="contract_date_end"/>
                             <field name="wage"/>
                             <field name="state"/>
                         </list>

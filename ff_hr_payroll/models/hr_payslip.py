@@ -29,7 +29,7 @@ class HrPayslip(models.Model):
         'hr.employee', string="Employee", required=True, tracking=True,
         ondelete='restrict', check_company=True)
     contract_id = fields.Many2one(
-        'hr.contract', string="Contract", tracking=True, check_company=True,
+        'hr.version', string="Contract", tracking=True, check_company=True,
         ondelete='restrict')
     company_id = fields.Many2one(
         'res.company', string="Company", required=True,
@@ -98,10 +98,11 @@ class HrPayslip(models.Model):
             if vals.get('name', _('New')) == _('New'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('hr.payslip') or _('New')
             if not vals.get('contract_id') and vals.get('employee_id'):
-                contract = self.env['hr.contract'].search([
+                contract = self.env['hr.version'].search([
                     ('employee_id', '=', vals['employee_id']),
                     ('state', '=', 'open'),
-                ], order='date_start desc', limit=1)
+                    ('contract_date_start', '!=', False),
+                ], order='contract_date_start desc', limit=1)
                 if contract:
                     vals['contract_id'] = contract.id
                     if not vals.get('struct_id'):
@@ -116,11 +117,13 @@ class HrPayslip(models.Model):
     @api.onchange('employee_id', 'date_from', 'date_to')
     def _onchange_employee_period(self):
         if self.employee_id and self.date_from and self.date_to and not self.contract_id:
-            contract = self.env['hr.contract'].search([
+            contract = self.env['hr.version'].search([
                 ('employee_id', '=', self.employee_id.id),
                 ('state', '=', 'open'),
-                ('date_start', '<=', self.date_to),
-            ], order='date_start desc', limit=1)
+                ('contract_date_start', '<=', self.date_to),
+                '|', ('contract_date_end', '=', False),
+                     ('contract_date_end', '>=', self.date_from),
+            ], order='contract_date_start desc', limit=1)
             if contract:
                 self.contract_id = contract.id
                 self.struct_id = contract.struct_id.id
@@ -136,7 +139,12 @@ class HrPayslip(models.Model):
             name = {'WORK100': 'Worked Days', 'LEAVE100': 'Paid Leave',
                     'LEAVE90': 'Unpaid Leave', 'ABSENT': 'Absence (No Leave)'}.get(code, code)
             wet = self.env['hr.work.entry.type'].create({
-                'name': name, 'code': code, 'is_leave': code.startswith('LEAVE')})
+                'name': name,
+                'code': code,
+                'count_as': 'absence' if code.startswith(('LEAVE', 'ABSENT')) else 'working_time',
+                'amount_rate': 0.0 if code == 'LEAVE90' else 1.0,
+                'unpaid': code == 'LEAVE90',
+            })
         return wet
 
     def _get_expected_work_days(self, employee, d_from, d_to):
@@ -203,9 +211,9 @@ class HrPayslip(models.Model):
                 ('date_to', '>=', start_dt),
             ])
             for leave in leaves:
-                # paid/unpaid determined by the leave TYPE (hr.leave.type.unpaid)
+                # Odoo 20 stores paid/unpaid on the leave work entry type.
                 days = leave.number_of_days or 0.0
-                if leave.holiday_status_id.unpaid:
+                if leave.work_entry_type_id.unpaid:
                     unpaid_days += days
                 else:
                     paid_days += days

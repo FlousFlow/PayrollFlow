@@ -8,37 +8,11 @@ from odoo.exceptions import UserError, ValidationError
 class HrContract(models.Model):
     """Employee contract with payroll settings.
 
-    Mirrors the Enterprise ``hr.contract`` used by the payroll engine.
+    Payroll fields on Odoo 20's native employee version record.
     """
-    _description = "Employee Contract"
-    _name = 'hr.contract'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-    _check_company_auto = True
-    _order = 'date_start desc, id desc'
-
-    name = fields.Char(
-        string="Contract Reference", required=True, tracking=True,
-        default=lambda self: _('New'))
-    employee_id = fields.Many2one(
-        'hr.employee', string="Employee", required=True, tracking=True,
-        ondelete='cascade', check_company=True)
-    company_id = fields.Many2one(
-        'res.company', string="Company", required=True,
-        default=lambda self: self.env.company, tracking=True)
-    currency_id = fields.Many2one(
-        'res.currency', string="Currency",
-        related='company_id.currency_id', readonly=True)
-    department_id = fields.Many2one(
-        'hr.department', string="Department",
-        related='employee_id.department_id', readonly=True)
-    job_id = fields.Many2one(
-        'hr.job', string="Job Position",
-        related='employee_id.job_id', readonly=True)
+    _inherit = 'hr.version'
 
     # --- Payroll settings ---
-    wage = fields.Monetary(
-        string="Wage", currency_field='currency_id', tracking=True,
-        help="The employee's base wage for the schedule period (e.g. monthly wage).")
     schedule_pay = fields.Selection([
         ('monthly', 'Monthly'),
         ('weekly', 'Weekly'),
@@ -47,27 +21,11 @@ class HrContract(models.Model):
         ('hourly', 'Hourly'),
     ], string="Schedule Pay", default='monthly', required=True, tracking=True,
         help="How often the wage is paid. Determines how the payslip period is prorated.")
-    structure_type_id = fields.Many2one(
-        'hr.payroll.structure.type', string="Salary Structure Type",
-        tracking=True,
-        help="Salary structure type (e.g. Employee / Worker) used to select the salary rules.")
     struct_id = fields.Many2one(
         'hr.payroll.structure', string="Salary Structure", tracking=True,
         help="Payroll structure that groups the salary rules applied to this "
              "contract. Its parent structures' rules are inherited.")
-    resource_calendar_id = fields.Many2one(
-        'resource.calendar', string="Working Schedule",
-        check_company=True, tracking=True,
-        help="Working hours of the employee. Used to compute worked days / hours.")
-
-    # --- Validity ---
-    date_start = fields.Date(
-        string="Start Date", required=True, tracking=True,
-        default=lambda self: fields.Date.today())
-    date_end = fields.Date(
-        string="End Date", tracking=True,
-        help="Optional end date. Empty = open-ended contract.")
-
+    # Odoo 20 stores employee contract dates on hr.version.
     state = fields.Selection([
         ('draft', 'Draft'),
         ('open', 'Running'),
@@ -77,7 +35,7 @@ class HrContract(models.Model):
 
     # --- History ---
     previous_contract_id = fields.Many2one(
-        'hr.contract', string="Previous Contract",
+        'hr.version', string="Previous Contract",
         help="The contract that was active before this one, if any.")
 
     # ------------------------------------------------------------------
@@ -86,7 +44,7 @@ class HrContract(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if vals.get('name', _('New')) == _('New'):
+            if vals.get('name') in (False, _('New')):
                 vals['name'] = self.env['ir.sequence'].next_by_code('hr.contract') or _('New')
         return super().create(vals_list)
 
@@ -96,14 +54,14 @@ class HrContract(models.Model):
             if contract.wage and contract.wage < 0:
                 raise ValidationError(_("The wage cannot be negative."))
 
-    @api.constrains('date_start', 'date_end')
-    def _check_dates(self):
+    @api.constrains('contract_date_start', 'contract_date_end')
+    def _check_payroll_dates(self):
         for contract in self:
-            if contract.date_end and contract.date_end < contract.date_start:
+            if contract.contract_date_end and contract.contract_date_end < contract.contract_date_start:
                 raise ValidationError(_("The End Date must be on or after the Start Date."))
 
-    @api.constrains('employee_id', 'date_start', 'date_end', 'state')
-    def _check_no_overlap(self):
+    @api.constrains('employee_id', 'contract_date_start', 'contract_date_end', 'state')
+    def _check_payroll_no_overlap(self):
         """One active contract per employee at a time.
 
         The new contract must not overlap any OTHER running contract of the
@@ -111,7 +69,7 @@ class HrContract(models.Model):
         it also blocks creating a draft that collides with a running one).
         """
         for contract in self:
-            if not contract.date_start:
+            if not contract.contract_date_start:
                 continue
             other = self.search([
                 ('employee_id', '=', contract.employee_id.id),
@@ -119,10 +77,10 @@ class HrContract(models.Model):
                 ('state', '=', 'open'),
             ])
             for existing in other:
-                existing_start = existing.date_start or date.min
-                existing_end = existing.date_end or date.max
-                new_start = contract.date_start
-                new_end = contract.date_end or date.max
+                existing_start = existing.contract_date_start or date.min
+                existing_end = existing.contract_date_end or date.max
+                new_start = contract.contract_date_start
+                new_end = contract.contract_date_end or date.max
                 if new_start <= existing_end and existing_start <= new_end:
                     raise ValidationError(_(
                         "This employee already has a running contract overlapping these dates."))
@@ -133,7 +91,11 @@ class HrContract(models.Model):
     def action_open(self):
         if not self.wage:
             raise UserError(_("Please set the contract wage before opening it."))
-        self.write({'state': 'open'})
+        for contract in self:
+            vals = {'state': 'open'}
+            if not contract.contract_date_start:
+                vals['contract_date_start'] = fields.Date.today()
+            contract.write(vals)
 
     def action_view_payslips(self):
         self.ensure_one()
@@ -149,24 +111,14 @@ class HrContract(models.Model):
         }
 
     def action_close(self):
-        self.write({'state': 'close'})
+        self.write({'state': 'close', 'contract_date_end': fields.Date.today()})
 
     def action_cancel(self):
-        self.write({'state': 'cancel'})
+        self.write({
+            'state': 'cancel',
+            'contract_date_start': False,
+            'contract_date_end': False,
+        })
 
     def action_draft(self):
-        self.write({'state': 'draft'})
-
-    # ------------------------------------------------------------------
-    # Overrides
-    # ------------------------------------------------------------------
-    def write(self, vals):
-        if 'state' in vals and vals['state'] != 'draft' and self.filtered(lambda c: c.state == 'draft'):
-            pass
-        return super().write(vals)
-
-    def unlink(self):
-        for contract in self:
-            if contract.state == 'open':
-                raise UserError(_("You cannot delete a running contract. Cancel it first."))
-        return super().unlink()
+        self.write({'state': 'draft', 'contract_date_start': False, 'contract_date_end': False})
