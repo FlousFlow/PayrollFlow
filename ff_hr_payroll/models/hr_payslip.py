@@ -170,9 +170,9 @@ class HrPayslip(models.Model):
         - LEAVE100: validated paid leave (from hr.leave)
         - LEAVE90:  validated UNPAID leave (approved leave with no balance ->
           deducted one day for one day)
-        - ABSENT:    absence WITHOUT an approved leave (unapproved absence) ->
-          a separate code so you can build a flexible rule that deducts the
-          day as 2 days or more (e.g. -2 * wage/30 * ABSENT).
+        - ABSENT:    scheduled working days without attendance or approved leave,
+          limited to the active contract period and consumed by the configured
+          absence deduction rule.
         """
         for payslip in self:
             vals = []
@@ -182,6 +182,18 @@ class HrPayslip(models.Model):
             employee = payslip.employee_id
             d_from = payslip.date_from
             d_to = payslip.date_to
+
+            # A payslip period can start before the employee's contract or end
+            # after it. Only count attendance, leave, and expected workdays
+            # while this payslip's contract is active.
+            contract = payslip.contract_id
+            if contract:
+                d_from = max(d_from, contract.date_start)
+                if contract.date_end:
+                    d_to = min(d_to, contract.date_end)
+            if d_from > d_to:
+                payslip.worked_days_ids = [(5, 0, 0)]
+                continue
 
             # --- 1) Attendance days -> WORK100 ---
             start_dt = datetime.combine(d_from, datetime.min.time())

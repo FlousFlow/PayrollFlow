@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Flous Flow HR Payroll',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.0.2',
     'category': 'Human Resources/Payroll',
     'summary': 'Flexible payroll engine for Odoo 19 Community: contracts, salary rules, payslips, configurable deductions and automatic accrual posting',
     'description': """
@@ -27,7 +27,7 @@ Main features
 * Payslips with computed lines, manual inputs (advances, loans, fines) and worked days.
 * Payslip Batches (``hr.payslip.run``): one payslip per employee with an open contract.
 * Automatic accrual posting (Dr salary expense / Cr salary payable), fiscal-lock aware.
-* Attendance / Time Off integration: paid leave (no deduction), unpaid leave (one day), absence (separate code, deduct 2x / 3x ...).
+* Attendance / Time Off integration: paid leave (no deduction), unpaid leave (one day), and absence deductions (one daily wage by default).
 * Flexible KPI bonuses through the native Gamification app.
 * Sales KPI / commission read from the linked user's confirmed sale orders.
 * HR Fines: record penalties and deduct them automatically.
@@ -59,6 +59,7 @@ feature optionally reads ``sale.order`` if the ``sale`` module is installed.
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/salary_rule_categories.xml',
+        'data/salary_rules.xml',
         'data/hr_payslip_fine_data.xml',
         'views/hr_contract_views.xml',
         'views/hr_payroll_structure_views.xml',

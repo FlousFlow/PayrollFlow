@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="salary_rule_absence_deduction" model="hr.salary.rule">
+            <field name="name">Unapproved Absence Deduction</field>
+            <field name="code">ABSENCE_DED</field>
+            <field name="sequence">90</field>
+            <field name="category_id" ref="category_deduction"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="structure_ids" eval="[ref('structure_employee'), ref('structure_worker'), ref('structure_manager')]"/>
+            <field name="is_absence_rule">True</field>
+            <field name="absence_code">ABSENT</field>
+            <field name="absence_multiplier">1.0</field>
+            <field name="absence_daily_wage">True</field>
+            <field name="appears_on_payslip">True</field>
+        </record>
+    </data>
+</odoo>

@@ -41,8 +41,9 @@ company document layout built in.
   - `WORK100` — days actually attended.
   - `LEAVE100` — approved paid leave (has balance) → **no deduction**.
   - `LEAVE90` — approved unpaid leave (no balance) → **deducts one day**.
-  - `ABSENT` — absence without any request → a **separate code** so you can
-    deduct it at 2x / 3x … per day (build the rule from the UI).
+  - `ABSENT` — unapproved absence inside the active contract period. The
+    default salary rule deducts one thirtieth of monthly wage per absent day;
+    adjust the multiplier on the rule if company policy requires it.
 
 ### KPI & Performance
 - **Flexible KPI bonuses** through the native Gamification app: a dedicated
