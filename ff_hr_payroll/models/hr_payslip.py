@@ -41,6 +41,9 @@ class HrPayslip(models.Model):
     date_from = fields.Date(string="From", required=True, tracking=True)
     date_to = fields.Date(string="To", required=True, tracking=True)
     date_payment = fields.Date(string="Payment Date", tracking=True)
+    notes = fields.Text(
+        string="Notes", tracking=True, copy=False,
+        help="Additional notes for this payslip. These notes are included in the payslip PDF.")
 
     struct_id = fields.Many2one(
         'hr.payroll.structure', string="Structure", tracking=True,

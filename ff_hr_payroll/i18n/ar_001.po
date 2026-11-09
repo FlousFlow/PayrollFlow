@@ -1209,6 +1209,13 @@ msgid "Payment Date"
 msgstr "تاريخ الدفع"
 
 #. module: ff_hr_payroll
+#: model:ir.model.fields,field_description:ff_hr_payroll.field_hr_payslip__notes
+#: model_terms:ir.ui.view,arch_db:ff_hr_payroll.hr_payslip_view_form
+#: model_terms:ir.ui.view,arch_db:ff_hr_payroll.report_hr_payslip
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ff_hr_payroll
 #: model:ir.ui.menu,name:ff_hr_payroll.menu_hr_payroll_root
 #: model:res.groups.privilege,name:ff_hr_payroll.res_groups_privilege_ff_hr_payroll
 #: model_terms:ir.ui.view,arch_db:ff_hr_payroll.hr_contract_view_form

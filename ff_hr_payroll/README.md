@@ -72,6 +72,7 @@ company document layout built in.
 
 ### Documents & Emails
 - **Payslip PDF** report using the company document layout (`web.external_layout`).
+- **Payslip notes** are tracked in the chatter and included in the employee PDF.
 - **Send by Email** — one click opens the composer with the payslip PDF attached.
 - **Arabic translations** (`ar_001`) + English.
 

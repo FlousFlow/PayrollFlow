@@ -124,6 +124,9 @@
                                 </list>
                             </field>
                         </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Write notes for this payslip..."/>
+                        </page>
                     </notebook>
                 </sheet>
                 <chatter/>
