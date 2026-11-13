@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Flous Flow HR Payroll',
-    'version': '19.0.1.0.2',
+    'version': '19.0.1.0.3',
     'category': 'Human Resources/Payroll',
     'summary': 'Flexible payroll engine for Odoo 19 Community: contracts, salary rules, payslips, configurable deductions and automatic accrual posting',
     'description': """

@@ -44,6 +44,9 @@ company document layout built in.
   - `ABSENT` — unapproved absence inside the active contract period. The
     default salary rule deducts one thirtieth of monthly wage per absent day;
     adjust the multiplier on the rule if company policy requires it.
+- Company-wide full-day holidays on the employee's resource calendar are
+  excluded from expected workdays, so public holidays are not counted as
+  unapproved absences.
 
 ### KPI & Performance
 - **Flexible KPI bonuses** through the native Gamification app: a dedicated

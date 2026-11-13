@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 
+import pytz
 from dateutil.relativedelta import relativedelta
 
 from odoo import _, api, fields, models
@@ -143,7 +144,7 @@ class HrPayslip(models.Model):
         return wet
 
     def _get_expected_work_days(self, employee, d_from, d_to):
-        """Number of working days in the period according to the employee calendar."""
+        """Scheduled workdays, excluding company-wide full-day holidays."""
         calendar = employee.resource_calendar_id
         if not calendar:
             # fall back to a 5-day working week
@@ -155,13 +156,35 @@ class HrPayslip(models.Model):
                 day += timedelta(days=1)
             return days
         attendance_days = {a.dayofweek for a in calendar.attendance_ids}
-        days = 0
+        scheduled_days = set()
         day = d_from
         while day <= d_to:
             if str(day.weekday()) in attendance_days:
-                days += 1
+                scheduled_days.add(day)
             day += timedelta(days=1)
-        return days
+
+        # Public holidays are stored as global resource calendar leaves. They
+        # must not become unapproved absences or reduce a monthly salary.
+        start_dt = datetime.combine(d_from, datetime.min.time())
+        end_dt = datetime.combine(d_to, datetime.max.time())
+        holidays = self.env['resource.calendar.leaves'].search([
+            ('calendar_id', 'in', [calendar.id, False]),
+            ('company_id', 'in', [employee.company_id.id, False]),
+            ('resource_id', '=', False),
+            ('time_type', '=', 'leave'),
+            ('date_from', '<=', end_dt),
+            ('date_to', '>=', start_dt),
+        ])
+        calendar_tz = pytz.timezone(calendar.tz or 'UTC')
+        holiday_days = set()
+        for holiday in holidays:
+            local_start = pytz.UTC.localize(holiday.date_from).astimezone(calendar_tz).date()
+            local_end = pytz.UTC.localize(holiday.date_to).astimezone(calendar_tz).date()
+            holiday_days.update(
+                workday for workday in scheduled_days
+                if local_start <= workday <= local_end
+            )
+        return len(scheduled_days - holiday_days)
 
     def action_generate_worked_days(self):
         """Aggregate Attendance and validated Time Off into worked days lines.
